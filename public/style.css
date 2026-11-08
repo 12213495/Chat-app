@@ -1,0 +1,443 @@
+/* ---------- Page ---------- */
+body {
+  margin: 0;
+  padding-top: 3.5rem;
+  padding-bottom: 4rem;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: #efeae2;
+}
+
+/* ---------- Message bar ---------- */
+#form {
+  background: #f0f2f5;
+  padding: 0.4rem 0.5rem;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  box-sizing: border-box;
+  z-index: 5;
+}
+
+#input {
+  border: none;
+  padding: 0.7rem 1rem;
+  flex-grow: 1;
+  border-radius: 2rem;
+  background: #fff;
+  font-size: 1rem;
+  min-width: 0;
+}
+
+#input:focus {
+  outline: none;
+}
+
+/* ---------- Icon buttons ---------- */
+.icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.icon-btn:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.icon-btn svg {
+  width: 26px;
+  height: 26px;
+  fill: #54656f;
+}
+
+#attach svg {
+  transform: rotate(45deg);
+}
+
+#send {
+  background: #00a884;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+}
+
+#send:hover {
+  background: #029a7a;
+}
+
+#send svg {
+  fill: #fff;
+  width: 22px;
+  height: 22px;
+  margin-left: 2px;
+}
+
+/* ---------- Emoji picker ---------- */
+emoji-picker {
+  position: fixed;
+  bottom: 4rem;
+  left: 0.5rem;
+  display: none;
+  z-index: 10;
+  width: 340px;
+  max-width: calc(100vw - 1rem);
+  height: 380px;
+}
+
+emoji-picker.open {
+  display: block;
+}
+
+/* ---------- Messages ---------- */
+#messages {
+  list-style-type: none;
+  margin: 0;
+  padding: 0.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+#messages > li {
+  max-width: 70%;
+  padding: 0.4rem 0.7rem;
+  border-radius: 0.6rem;
+  word-wrap: break-word;
+  box-shadow: 0 1px 0.5px rgba(0, 0, 0, 0.13);
+}
+
+#messages > li .name {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #067a62;
+  margin-bottom: 0.15rem;
+}
+
+#messages > li img {
+  display: block;
+  max-width: 100%;
+  border-radius: 0.4rem;
+  margin-top: 0.3rem;
+}
+
+/* Your messages (right, green) */
+#messages > li.mine {
+  align-self: flex-end;
+  background: #d9fdd3;
+  color: #111b21;
+  border-top-right-radius: 0;
+}
+
+#messages > li.mine .name {
+  display: none;
+}
+
+/* Other person's messages (left, white) */
+#messages > li.other {
+  align-self: flex-start;
+  background: #fff;
+  color: #111b21;
+  border-top-left-radius: 0;
+}
+
+/* Old messages saved before names existed */
+#messages > li.old {
+  align-self: flex-start;
+  background: #fff;
+  color: #111b21;
+}
+
+/* ---------- Camera screen ---------- */
+#cameraModal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: #000;
+  z-index: 20;
+  flex-direction: column;
+}
+
+#cameraModal.open {
+  display: flex;
+}
+
+#video,
+#preview {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  object-fit: contain;
+  background: #000;
+}
+
+#cameraControls {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 1rem;
+  background: #111;
+}
+
+#cameraControls button {
+  border: none;
+  cursor: pointer;
+  color: #fff;
+  background: #333;
+  border-radius: 2rem;
+  padding: 0.7rem 1.2rem;
+  font-size: 1rem;
+}
+
+#cameraControls button.primary {
+  background: #00a884;
+}
+
+#shutter {
+  width: 66px;
+  height: 66px;
+  padding: 0;
+  border-radius: 50%;
+  background: #fff !important;
+  border: 5px solid #bbb !important;
+}
+
+/* ---------- Welcome screen ---------- */
+#welcome {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: linear-gradient(135deg, #00a884, #075e54, #25d366, #128c7e);
+  background-size: 300% 300%;
+  animation: gradientMove 12s ease infinite;
+  transition: opacity 0.5s, visibility 0.5s;
+}
+
+#welcome.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+@keyframes gradientMove {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Floating bubbles in the background */
+.bubbles span {
+  position: absolute;
+  bottom: -120px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  animation: floatUp 14s linear infinite;
+}
+
+.bubbles span:nth-child(1) { left: 5%;  width: 40px;  height: 40px;  animation-duration: 12s; }
+.bubbles span:nth-child(2) { left: 18%; width: 80px;  height: 80px;  animation-duration: 16s; animation-delay: 2s; }
+.bubbles span:nth-child(3) { left: 30%; width: 30px;  height: 30px;  animation-duration: 10s; animation-delay: 4s; }
+.bubbles span:nth-child(4) { left: 45%; width: 100px; height: 100px; animation-duration: 18s; animation-delay: 1s; }
+.bubbles span:nth-child(5) { left: 60%; width: 50px;  height: 50px;  animation-duration: 13s; animation-delay: 5s; }
+.bubbles span:nth-child(6) { left: 72%; width: 70px;  height: 70px;  animation-duration: 15s; animation-delay: 3s; }
+.bubbles span:nth-child(7) { left: 85%; width: 35px;  height: 35px;  animation-duration: 11s; animation-delay: 6s; }
+.bubbles span:nth-child(8) { left: 93%; width: 90px;  height: 90px;  animation-duration: 17s; animation-delay: 2s; }
+
+@keyframes floatUp {
+  0%   { transform: translateY(0) scale(1); opacity: 0; }
+  10%  { opacity: 1; }
+  100% { transform: translateY(-120vh) scale(1.3); opacity: 0; }
+}
+
+/* Card */
+.welcome-card {
+  position: relative;
+  z-index: 1;
+  background: #fff;
+  width: min(90vw, 380px);
+  box-sizing: border-box;
+  padding: 2rem 1.5rem;
+  border-radius: 1.2rem;
+  text-align: center;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  animation: popIn 0.6s cubic-bezier(0.2, 1.3, 0.4, 1);
+}
+
+@keyframes popIn {
+  from { transform: scale(0.7) translateY(30px); opacity: 0; }
+  to   { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+.welcome-card h1 {
+  margin: 0.8rem 0 0.2rem;
+  font-size: 1.6rem;
+  color: #111b21;
+}
+
+.welcome-card p {
+  margin: 0 0 1.2rem;
+  color: #667781;
+}
+
+.welcome-card input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.8rem 1rem;
+  border: 2px solid #e4e4e4;
+  border-radius: 2rem;
+  font-size: 1rem;
+  text-align: center;
+  transition: border-color 0.2s;
+}
+
+.welcome-card input:focus {
+  outline: none;
+  border-color: #00a884;
+}
+
+.welcome-card input.shake {
+  animation: shake 0.4s;
+  border-color: #f44336;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-8px); }
+  40%, 80% { transform: translateX(8px); }
+}
+
+/* Color picker */
+.colors {
+  display: flex;
+  justify-content: center;
+  gap: 0.6rem;
+  margin: 1.2rem 0;
+}
+
+.color-option {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+
+.color-option:hover {
+  transform: scale(1.15);
+}
+
+.color-option.selected {
+  border-color: #111b21;
+  transform: scale(1.2);
+}
+
+/* Join button */
+#joinBtn {
+  width: 100%;
+  padding: 0.8rem;
+  border: none;
+  border-radius: 2rem;
+  background: #00a884;
+  color: #fff;
+  font-size: 1.05rem;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+
+#joinBtn:hover {
+  background: #029a7a;
+}
+
+#joinBtn:active {
+  transform: scale(0.97);
+}
+
+/* ---------- Avatars ---------- */
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #00a884;
+  color: #fff;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.25s;
+}
+
+.avatar.big {
+  width: 84px;
+  height: 84px;
+  font-size: 2.2rem;
+  margin: 0 auto;
+}
+
+.avatar.bounce {
+  animation: bounce 0.3s;
+}
+
+@keyframes bounce {
+  50% { transform: scale(1.15); }
+}
+
+/* ---------- Top bar ---------- */
+#topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3.5rem;
+  z-index: 5;
+  box-sizing: border-box;
+  padding: 0 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  background: #075e54;
+  color: #fff;
+}
+
+#topbar .avatar {
+  width: 38px;
+  height: 38px;
+}
+
+.topbar-text {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  line-height: 1.2;
+}
+
+.topbar-text small {
+  color: #b7e4dc;
+}
+
+#leaveBtn {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  border: none;
+  border-radius: 2rem;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+#leaveBtn:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
