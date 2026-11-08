@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Socket.IO chat</title>
+  <style>
+    body { margin: 0; padding-bottom: 3.5rem; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: #f4f4f4; }
+
+    #form { background: #fff; padding: 0.25rem; position: fixed; bottom: 0; left: 0; right: 0; display: flex; height: 3.5rem; box-sizing: border-box; border-top: 1px solid #ddd; }
+    #input { border: 1px solid #ccc; padding: 0 1rem; flex-grow: 1; border-radius: 2rem; margin: 0.25rem; }
+    #input:focus { outline: none; border-color: #0b7cff; }
+    #form > button { background: #0b7cff; border: none; padding: 0 1.2rem; margin: 0.25rem; border-radius: 2rem; outline: none; color: #fff; cursor: pointer; }
+
+    #messages { list-style-type: none; margin: 0; padding: 0.5rem; display: flex; flex-direction: column; gap: 0.4rem; }
+    #messages > li { max-width: 70%; padding: 0.5rem 0.9rem; border-radius: 1rem; word-wrap: break-word; }
+    #messages > li .name { display: block; font-size: 0.7rem; opacity: 0.7; margin-bottom: 0.15rem; }
+    #messages > li.mine { align-self: flex-end; background: #0b7cff; color: #fff; border-bottom-right-radius: 0.2rem; }
+    #messages > li.other { align-self: flex-start; background: #e4e4e4; color: #000; border-bottom-left-radius: 0.2rem; }
+    #messages > li.old { align-self: flex-start; background: #e4e4e4; color: #000; }
+  </style>
+</head>
+<body>
+  <ul id="messages"></ul>
+  <form id="form" action="">
+    <input id="input" autocomplete="off" placeholder="Type a message..." /><button>Send</button>
+  </form>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    let counter = 0;
+
+    // Each browser tab gets its own name and id, so two tabs act like two different people
+    let myName = sessionStorage.getItem('chatName');
+    if (!myName) {
+      myName = prompt('Enter your name:') || 'Guest';
+      sessionStorage.setItem('chatName', myName);
+    }
+    let myId = sessionStorage.getItem('chatId');
+    if (!myId) {
+      myId = Math.random().toString(36).slice(2);
+      sessionStorage.setItem('chatId', myId);
+    }
+
+    const socket = io({
+      auth: {
+        serverOffset: 0
+      },
+      ackTimeout: 10000,
+      retries: 3,
+    });
+
+    const form = document.getElementById('form');
+    const input = document.getElementById('input');
+    const messages = document.getElementById('messages');
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (input.value) {
+        const clientOffset = `${socket.id}-${counter++}`;
+        const payload = JSON.stringify({ id: myId, name: myName, text: input.value });
+        socket.emit('chat message', payload, clientOffset);
+        input.value = '';
+      }
+    });
+
+    socket.on('chat message', (msg, serverOffset) => {
+      const item = document.createElement('li');
+
+      let data;
+      try { data = JSON.parse(msg); } catch (e) { data = null; }
+
+      if (data && data.text) {
+        item.className = data.id === myId ? 'mine' : 'other';
+        const name = document.createElement('span');
+        name.className = 'name';
+        name.textContent = data.id === myId ? 'You' : data.name;
+        const text = document.createElement('span');
+        text.textContent = data.text;
+        item.appendChild(name);
+        item.appendChild(text);
+      } else {
+        // old messages saved before this change
+        item.className = 'old';
+        item.textContent = msg;
+      }
+
+      messages.appendChild(item);
+      window.scrollTo(0, document.body.scrollHeight);
+      socket.auth.serverOffset = serverOffset;
+    });
+  </script>
+</body>
+</html>
