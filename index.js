@@ -5,6 +5,7 @@ import { dirname, join } from 'node:path';
 import { Server } from 'socket.io';
 import { DatabaseSync } from 'node:sqlite';
 
+// ----- Database -----
 const db = new DatabaseSync('chat.db');
 db.exec(`
   CREATE TABLE IF NOT EXISTS messages (
@@ -17,18 +18,20 @@ db.exec(`
 const insertMessage = db.prepare('INSERT INTO messages (content, client_offset) VALUES (?, ?)');
 const selectMessages = db.prepare('SELECT id, content FROM messages WHERE id > ?');
 
+// ----- Server -----
 const app = express();
 const server = createServer(app);
 const io = new Server(server, {
-  connectionStateRecovery: {}
+  connectionStateRecovery: {},
+  maxHttpBufferSize: 5e6   // allow messages up to 5 MB (for images)
 });
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
-app.get('/', (req, res) => {
-  res.sendFile(join(__dirname, 'index.html'));
-});
+// Serve the files inside the "public" folder (index.html, style.css, script.js)
+app.use(express.static(join(__dirname, 'public')));
 
+// ----- Chat logic -----
 io.on('connection', (socket) => {
   socket.on('chat message', (msg, clientOffset, callback) => {
     let result;
